@@ -1,0 +1,24 @@
+[1] active tags in tree: ['I', 'I-01', 'I-0101', 'I-0102', 'I-02', 'I-0201'] | draft tag I-0103 hidden: True
+[2] refcount SaaS: {'total': 5, 'by_type': {'capability': 1, 'demand': 1, 'enterprise': 3}} | PaaS: 1
+[3] merge SaaS->PaaS: {"moved": 5, "dedup": 1, "per_type": {"enterprise": 3, "demand": 1, "capability": 1}, "target_version": 2}
+    source -> {'status': 'merged'} merged_into set: True | target aliases: ['SaaS'] | events: ['taxonomy.tag_merged']
+    refs after merge  src: 0  tgt: 5
+[4] fault injected: simulated failure on crm_demand_tags
+    source status: active | refs src/tgt: 2 / 0 | outbox rows: 0
+    retry after fault cleared: moved 2
+[5] deprecate 云服务 -> PaaS: {"refcount_before": 2, "by_type": {"demand": 1, "enterprise": 1}, "migrated": 2, "version": 2}
+    children block: 409 ['I-0101', 'I-0102', 'I-0103']
+    draft tag refcount: 0
+[6] queue total: 3 | filtered(ai,pending): 1
+    ai w/o evidence: 422 ai-sourced proposal must carry an evidence snippet
+    batch-approve: {"ok": 2, "failed": 1, "results": [{"id": "f8b89dc2-9a71-494d-a76b-a81634cc46db", "ok": true}, {"id": "2328167c-413c-4f4b-863d-ca133d8a62ef", "ok": true}, {"id": "9a465652-f0bf-479b-add6-4cd32493e823", "ok": false, "error": "tag code duplicated in dict"}]}
+    self-review: 403 proposer cannot review their own proposal
+[7] history(PaaS): [(3, 'update'), (2, 'merge_target'), (1, 'create')] | v1 name: PaaS | v2 aliases: ['SaaS']
+[8] tree: 6 nodes, etag W/"9a117b242de1eedc" | stable: True | depth=1 roots: 3 children cut: True
+    dicts: [{'code': 'industry', 'name': '行业分类', 'max_depth': 3, 'tag_count': 9}]
+[9] dry-run: rows=7 added=3 updated=1 conflicts=0 errors=3
+    errors: [(5, 'name', 'name is empty'), (6, 'parent_code', 'unknown parent NONE'), (8, 'code', 'duplicated code inside file')]
+    added: ['P-01', 'P-02', 'P-05']
+    apply#1: {'created': 3, 'updated': 1, 'rows': 4}
+    apply#2 (same file): {'created': 0, 'updated': 0, 'rows': 4}
+    tags now: ['P', 'P-01', 'P-02', 'P-05']

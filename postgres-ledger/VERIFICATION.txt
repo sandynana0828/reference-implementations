@@ -1,0 +1,43 @@
+=== PostgreSQL deposit-ledger verification (real psql output) ===
+
+--- psql --version ---
+psql (PostgreSQL) 16.15
+
+--- SELECT version() ---
+                           version                           
+-------------------------------------------------------------
+ PostgreSQL 16.15, compiled by Visual C++ build 1944, 64-bit
+(1 row)
+
+
+--- psql -f schema.sql ---
+
+--- psql -f verify.sql ---
+INSERT 0 2
+ lease_code | amount_cents |          amount           |  source   
+------------+--------------+---------------------------+-----------
+ L-2026-001 |       125050 | 1250.5000000000000000 CNY | fictional
+ L-2026-002 |        98000 | 980.0000000000000000 CNY  | fictional
+(2 rows)
+
+psql:verify.sql:25: NOTICE:  CHECK (amount_cents >= 0) enforced as expected
+DO
+UPDATE 1
+INSERT 0 1
+ lease_code | amount_cents | live 
+------------+--------------+------
+ L-2026-001 |       125050 | f
+ L-2026-001 |       131000 | t
+ L-2026-002 |        98000 | t
+(3 rows)
+
+        indexname        |                                                               indexdef                                                               
+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------
+ deposit_ledger_pkey     | CREATE UNIQUE INDEX deposit_ledger_pkey ON public.deposit_ledger USING btree (id)
+ ix_deposit_account      | CREATE INDEX ix_deposit_account ON public.deposit_ledger USING btree (account_id)
+ uq_deposit_active_lease | CREATE UNIQUE INDEX uq_deposit_active_lease ON public.deposit_ledger USING btree (account_id, lease_code) WHERE (deleted_at IS NULL)
+(3 rows)
+
+
+--- exit status ---
+all statements executed with ON_ERROR_STOP=1

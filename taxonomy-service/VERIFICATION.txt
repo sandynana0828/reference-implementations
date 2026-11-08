@@ -1,0 +1,85 @@
+=== taxonomy-service verification (real command output, unedited) ===
+
+--- python --version ---
+Python 3.13.14
+
+=== 1) python -m unittest test_taxonomy -v ===
+test_delete_only_draft (test_taxonomy.TestCrudAndHistory.test_delete_only_draft) ... ok
+test_parent_change_recomputes_path_and_blocks_cycle (test_taxonomy.TestCrudAndHistory.test_parent_change_recomputes_path_and_blocks_cycle) ... ok
+test_version_and_snapshot (test_taxonomy.TestCrudAndHistory.test_version_and_snapshot) ... ok
+test_write_permission (test_taxonomy.TestCrudAndHistory.test_write_permission) ... ok
+test_deprecate_counts_and_migrates (test_taxonomy.TestDeprecate.test_deprecate_counts_and_migrates) ... ok
+test_deprecate_requires_reason (test_taxonomy.TestDeprecate.test_deprecate_requires_reason) ... ok
+test_deprecate_with_children_blocked (test_taxonomy.TestDeprecate.test_deprecate_with_children_blocked) ... ok
+test_merge_cross_dict_rejected (test_taxonomy.TestMerge.test_merge_cross_dict_rejected) ... ok
+test_merge_migrates_and_dedups (test_taxonomy.TestMerge.test_merge_migrates_and_dedups) ... ok
+test_merge_rollback_is_atomic (test_taxonomy.TestMerge.test_merge_rollback_is_atomic) ... ok
+test_dict_code_unique (test_taxonomy.TestModel.test_dict_code_unique) ... ok
+test_max_depth_enforced (test_taxonomy.TestModel.test_max_depth_enforced) ... ok
+test_soft_delete_frees_code (test_taxonomy.TestModel.test_soft_delete_frees_code) ... ok
+test_tag_code_unique_within_dict (test_taxonomy.TestModel.test_tag_code_unique_within_dict) ... ok
+test_ai_needs_evidence (test_taxonomy.TestProposal.test_ai_needs_evidence) ... ok
+test_batch_approve_isolation (test_taxonomy.TestProposal.test_batch_approve_isolation) ... ok
+test_batch_limit_50 (test_taxonomy.TestProposal.test_batch_limit_50) ... ok
+test_reject_reason_required (test_taxonomy.TestProposal.test_reject_reason_required) ... ok
+test_self_review_blocked (test_taxonomy.TestProposal.test_self_review_blocked) ... ok
+test_import_dry_run_and_idempotency (test_taxonomy.TestTreeAndImport.test_import_dry_run_and_idempotency) ... ok
+test_tree_etag_and_depth (test_taxonomy.TestTreeAndImport.test_tree_etag_and_depth) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.064s
+
+OK
+
+=== 2) python demo.py ===
+[1] active tags in tree: ['I', 'I-01', 'I-0101', 'I-0102', 'I-02', 'I-0201'] | draft tag I-0103 hidden: True
+[2] refcount SaaS: {'total': 5, 'by_type': {'capability': 1, 'demand': 1, 'enterprise': 3}} | PaaS: 1
+[3] merge SaaS->PaaS: {"moved": 5, "dedup": 1, "per_type": {"enterprise": 3, "demand": 1, "capability": 1}, "target_version": 2}
+    source -> {'status': 'merged'} merged_into set: True | target aliases: ['SaaS'] | events: ['taxonomy.tag_merged']
+    refs after merge  src: 0  tgt: 5
+[4] fault injected: simulated failure on crm_demand_tags
+    source status: active | refs src/tgt: 2 / 0 | outbox rows: 0
+    retry after fault cleared: moved 2
+[5] deprecate 云服务 -> PaaS: {"refcount_before": 2, "by_type": {"demand": 1, "enterprise": 1}, "migrated": 2, "version": 2}
+    children block: 409 ['I-0101', 'I-0102', 'I-0103']
+    draft tag refcount: 0
+[6] queue total: 3 | filtered(ai,pending): 1
+    ai w/o evidence: 422 ai-sourced proposal must carry an evidence snippet
+    batch-approve: {"ok": 2, "failed": 1, "results": [{"id": "f8b89dc2-9a71-494d-a76b-a81634cc46db", "ok": true}, {"id": "2328167c-413c-4f4b-863d-ca133d8a62ef", "ok": true}, {"id": "9a465652-f0bf-479b-add6-4cd32493e823", "ok": false, "error": "tag code duplicated in dict"}]}
+    self-review: 403 proposer cannot review their own proposal
+[7] history(PaaS): [(3, 'update'), (2, 'merge_target'), (1, 'create')] | v1 name: PaaS | v2 aliases: ['SaaS']
+[8] tree: 6 nodes, etag W/"9a117b242de1eedc" | stable: True | depth=1 roots: 3 children cut: True
+    dicts: [{'code': 'industry', 'name': '行业分类', 'max_depth': 3, 'tag_count': 9}]
+[9] dry-run: rows=7 added=3 updated=1 conflicts=0 errors=3
+    errors: [(5, 'name', 'name is empty'), (6, 'parent_code', 'unknown parent NONE'), (8, 'code', 'duplicated code inside file')]
+    added: ['P-01', 'P-02', 'P-05']
+    apply#1: {'created': 3, 'updated': 1, 'rows': 4}
+    apply#2 (same file): {'created': 0, 'updated': 0, 'rows': 4}
+    tags now: ['P', 'P-01', 'P-02', 'P-05']
+
+=== 3) python smoke_test.py ===
+listening on http://127.0.0.1:8107
+dicts              GET   /api/taxonomy/dicts                          -> 200
+tree               GET   /api/taxonomy/dicts/industry/tree            -> 200 etag=W/"d5f23027cd1cf568"
+tree/304           GET   /api/taxonomy/dicts/industry/tree            -> 304 etag=W/"d5f23027cd1cf568"
+tag create         POST  /api/taxonomy/dicts/industry/tags            -> 201
+tag create/403     POST  /api/taxonomy/dicts/industry/tags            -> 403
+tag patch          PATCH /api/taxonomy/tags/2d360246-1ad6-4d70-8c28-df67c5a08d23 -> 200
+tag history        GET   /api/taxonomy/tags/2d360246-1ad6-4d70-8c28-df67c5a08d23/history -> 200
+tag refcount       GET   /api/taxonomy/tags/b74951fa-bf56-4693-bce6-ae4925bf5d73/refcount -> 200
+proposal ai/no-ev  POST  /api/taxonomy/proposals                      -> 422
+proposal ai        POST  /api/taxonomy/proposals                      -> 201
+proposal self-ok   POST  /api/taxonomy/proposals/3cb82d76-7166-431c-8305-e4686e527846/approve -> 403
+proposal batch     POST  /api/taxonomy/proposals/batch-approve        -> 200
+proposal list      GET   /api/taxonomy/proposals?status=pending       -> 200
+merge              POST  /api/taxonomy/tags/b74951fa-bf56-4693-bce6-ae4925bf5d73/merge -> 200
+                   merge payload -> {"moved": 2, "dedup": 1, "per_type": {"enterprise": 1, "demand": 1}}
+deprecate/409      POST  /api/taxonomy/tags/ccf1045b-fe7f-4245-96b2-9375414cfebb/deprecate -> 409
+public/401         GET   /api/public/taxonomy/industry                -> 401
+public/200         GET   /api/public/taxonomy/industry                -> 200 cache=max-age=300
+                   public payload keys -> ['code', 'name', 'children'] (definition/statistics stripped)
+
+=== summary (counted from the outputs above) ===
+unittest cases passed: 21
+HTTP requests asserted: 19
+all three commands exit status: 0

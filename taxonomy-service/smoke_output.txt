@@ -1,0 +1,20 @@
+listening on http://127.0.0.1:8107
+dicts              GET   /api/taxonomy/dicts                          -> 200
+tree               GET   /api/taxonomy/dicts/industry/tree            -> 200 etag=W/"d5f23027cd1cf568"
+tree/304           GET   /api/taxonomy/dicts/industry/tree            -> 304 etag=W/"d5f23027cd1cf568"
+tag create         POST  /api/taxonomy/dicts/industry/tags            -> 201
+tag create/403     POST  /api/taxonomy/dicts/industry/tags            -> 403
+tag patch          PATCH /api/taxonomy/tags/2d360246-1ad6-4d70-8c28-df67c5a08d23 -> 200
+tag history        GET   /api/taxonomy/tags/2d360246-1ad6-4d70-8c28-df67c5a08d23/history -> 200
+tag refcount       GET   /api/taxonomy/tags/b74951fa-bf56-4693-bce6-ae4925bf5d73/refcount -> 200
+proposal ai/no-ev  POST  /api/taxonomy/proposals                      -> 422
+proposal ai        POST  /api/taxonomy/proposals                      -> 201
+proposal self-ok   POST  /api/taxonomy/proposals/3cb82d76-7166-431c-8305-e4686e527846/approve -> 403
+proposal batch     POST  /api/taxonomy/proposals/batch-approve        -> 200
+proposal list      GET   /api/taxonomy/proposals?status=pending       -> 200
+merge              POST  /api/taxonomy/tags/b74951fa-bf56-4693-bce6-ae4925bf5d73/merge -> 200
+                   merge payload -> {"moved": 2, "dedup": 1, "per_type": {"enterprise": 1, "demand": 1}}
+deprecate/409      POST  /api/taxonomy/tags/ccf1045b-fe7f-4245-96b2-9375414cfebb/deprecate -> 409
+public/401         GET   /api/public/taxonomy/industry                -> 401
+public/200         GET   /api/public/taxonomy/industry                -> 200 cache=max-age=300
+                   public payload keys -> ['code', 'name', 'children'] (definition/statistics stripped)

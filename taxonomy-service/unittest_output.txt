@@ -1,0 +1,26 @@
+test_delete_only_draft (test_taxonomy.TestCrudAndHistory.test_delete_only_draft) ... ok
+test_parent_change_recomputes_path_and_blocks_cycle (test_taxonomy.TestCrudAndHistory.test_parent_change_recomputes_path_and_blocks_cycle) ... ok
+test_version_and_snapshot (test_taxonomy.TestCrudAndHistory.test_version_and_snapshot) ... ok
+test_write_permission (test_taxonomy.TestCrudAndHistory.test_write_permission) ... ok
+test_deprecate_counts_and_migrates (test_taxonomy.TestDeprecate.test_deprecate_counts_and_migrates) ... ok
+test_deprecate_requires_reason (test_taxonomy.TestDeprecate.test_deprecate_requires_reason) ... ok
+test_deprecate_with_children_blocked (test_taxonomy.TestDeprecate.test_deprecate_with_children_blocked) ... ok
+test_merge_cross_dict_rejected (test_taxonomy.TestMerge.test_merge_cross_dict_rejected) ... ok
+test_merge_migrates_and_dedups (test_taxonomy.TestMerge.test_merge_migrates_and_dedups) ... ok
+test_merge_rollback_is_atomic (test_taxonomy.TestMerge.test_merge_rollback_is_atomic) ... ok
+test_dict_code_unique (test_taxonomy.TestModel.test_dict_code_unique) ... ok
+test_max_depth_enforced (test_taxonomy.TestModel.test_max_depth_enforced) ... ok
+test_soft_delete_frees_code (test_taxonomy.TestModel.test_soft_delete_frees_code) ... ok
+test_tag_code_unique_within_dict (test_taxonomy.TestModel.test_tag_code_unique_within_dict) ... ok
+test_ai_needs_evidence (test_taxonomy.TestProposal.test_ai_needs_evidence) ... ok
+test_batch_approve_isolation (test_taxonomy.TestProposal.test_batch_approve_isolation) ... ok
+test_batch_limit_50 (test_taxonomy.TestProposal.test_batch_limit_50) ... ok
+test_reject_reason_required (test_taxonomy.TestProposal.test_reject_reason_required) ... ok
+test_self_review_blocked (test_taxonomy.TestProposal.test_self_review_blocked) ... ok
+test_import_dry_run_and_idempotency (test_taxonomy.TestTreeAndImport.test_import_dry_run_and_idempotency) ... ok
+test_tree_etag_and_depth (test_taxonomy.TestTreeAndImport.test_tree_etag_and_depth) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.064s
+
+OK

@@ -1,0 +1,17 @@
+# local runtime artifacts
+*.db
+*.sqlite3
+*.log
+__pycache__/
+*.pyc
+.venv/
+
+# never commit credentials
+.env
+*.key
+*_token*.txt
+*pat*.txt
+
+# OS
+Thumbs.db
+Desktop.ini
