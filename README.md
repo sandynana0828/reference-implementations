@@ -11,6 +11,8 @@
 | 示例 | 内容 | 验证结果 |
 |---|---|---|
 | [`taxonomy-service/`](taxonomy-service/) | 字典与标签中心：层级、版本历史、标签合并与引用迁移、停用、提案复核、批量导入、树缓存、公开只读接口 | 21 项单测全绿、19 条 HTTP 请求状态码符合预期 |
+| [`taxonomy-tree-query/`](taxonomy-tree-query/) | 字典树查询接口：默认过滤停用/合并标签、depth 分层、弱 ETag 条件请求（304） | 14 项单测全绿、真实 HTTP 冒烟（200/304/404） |
+| [`taxonomy-outbox-events/`](taxonomy-outbox-events/) | 字典变更事件：事务性 outbox、四类事件、回滚安全、幂等消费者 | 11 项单测全绿、端到端演示 7 条事件 |
 | [`postgres-ledger/`](postgres-ledger/) | PostgreSQL 押金台账模型：金额按分、jsonb、软删可复用业务键的部分唯一索引、CHECK 约束 | 真机 psql 执行输出 |
 
 ## 快速复现

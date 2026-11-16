@@ -1,0 +1,78 @@
+# HTTP smoke against python tree_api.py 8101 (real output)
+
+## GET /api/taxonomy/dicts
+HTTP/1.1 200 OK
+Server: BaseHTTP/0.6 Python/3.13.14
+Date: Mon, 16 Nov 2026 15:25:24 GMT
+Content-Type: application/json
+Content-Length: 74
+
+[{"code": "industry", "name": "Industry", "max_depth": 3, "tag_count": 4}]
+## GET /api/taxonomy/dicts/industry/tree (full)
+{
+    "dict": "industry",
+    "tags": [
+        {
+            "aliases": [],
+            "children": [
+                {
+                    "aliases": [
+                        "Middleware"
+                    ],
+                    "children": [
+                        {
+                            "aliases": [],
+                            "children": [],
+                            "code": "I-0102",
+                            "level": 3,
+                            "name": "PaaS",
+                            "status": "active"
+                        },
+                        {
+                            "aliases": [
+                                "cloud software"
+                            ],
+                            "children": [],
+                            "code": "I-0101",
+                            "level": 3,
+                            "name": "SaaS",
+                            "status": "active"
+                        }
+                    ],
+                    "code": "I-01",
+                    "level": 2,
+                    "name": "Software",
+                    "status": "active"
+                }
+            ],
+            "code": "I",
+            "level": 1,
+            "name": "Infotech",
+            "status": "active"
+        }
+    ],
+    "version": 9
+}
+
+## GET /api/taxonomy/dicts/industry/tree?depth=1
+{
+    "dict": "industry",
+    "tags": [
+        {
+            "aliases": [],
+            "children": [],
+            "code": "I",
+            "level": 1,
+            "name": "Infotech",
+            "status": "active"
+        }
+    ],
+    "version": 9
+}
+
+## conditional request: first 200 + ETag, then If-None-Match -> 304
+captured ETag: W/"e4b406843f7367bc"
+replay with If-None-Match -> HTTP 304, bytes=0
+
+## GET unknown dict -> 404
+HTTP 404

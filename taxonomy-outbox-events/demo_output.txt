@@ -1,0 +1,11 @@
+outbox rows: 7
+ - taxonomy.tag_activated
+ - taxonomy.tag_activated
+ - taxonomy.tag_activated
+ - taxonomy.tag_updated
+ - taxonomy.tag_deprecated
+ - taxonomy.tag_activated
+ - taxonomy.tag_merged
+matching engine keys: ['I', 'I-01']
+search index I-*: ['I-01', 'I-03']
+undelivered: 0
