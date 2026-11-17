@@ -1,5 +1,20 @@
-..............
-----------------------------------------------------------------------
-Ran 14 tests in 0.580s
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-9.2.0, pluggy-1.7.0 -- python.exe
+cachedir: .pytest_cache
+rootdir: .
+plugins: anyio-4.16.0
+collecting ... collected 11 items
 
-OK
+tests/test_tree.py::test_default_excludes_deprecated_and_merged PASSED   [  9%]
+tests/test_tree.py::test_include_deprecated_returns_deprecated_but_not_merged PASSED [ 18%]
+tests/test_tree.py::test_depth_one_returns_only_first_level PASSED       [ 27%]
+tests/test_tree.py::test_depth_two_keeps_second_level_and_truncates_third PASSED [ 36%]
+tests/test_tree.py::test_if_none_match_returns_304_and_revalidates_after_change PASSED [ 45%]
+tests/test_tree.py::test_etag_stable_and_weak_comparison PASSED          [ 54%]
+tests/test_tree.py::test_etag_depends_on_depth_and_include_deprecated PASSED [ 63%]
+tests/test_tree.py::test_list_dicts_with_tag_counts PASSED               [ 72%]
+tests/test_tree.py::test_unknown_dict_404 PASSED                         [ 81%]
+tests/test_tree.py::test_invalid_depth_rejected PASSED                   [ 90%]
+tests/test_tree.py::test_healthz PASSED                                  [100%]
+
+============================= 11 passed in 3.36s ==============================

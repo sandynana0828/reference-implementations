@@ -1,78 +1,23 @@
-# HTTP smoke against python tree_api.py 8101 (real output)
-
-## GET /api/taxonomy/dicts
+$ curl -i http://127.0.0.1:8201/api/taxonomy/dicts/industry/tree
 HTTP/1.1 200 OK
-Server: BaseHTTP/0.6 Python/3.13.14
-Date: Mon, 16 Nov 2026 15:25:24 GMT
-Content-Type: application/json
-Content-Length: 74
+date: Tue, 17 Nov 2026 09:00:14 GMT
+server: uvicorn
+etag: W/"3a7149a5a5f2b4c0"
+content-length: 580
+content-type: application/json
 
-[{"code": "industry", "name": "Industry", "max_depth": 3, "tag_count": 4}]
-## GET /api/taxonomy/dicts/industry/tree (full)
-{
-    "dict": "industry",
-    "tags": [
-        {
-            "aliases": [],
-            "children": [
-                {
-                    "aliases": [
-                        "Middleware"
-                    ],
-                    "children": [
-                        {
-                            "aliases": [],
-                            "children": [],
-                            "code": "I-0102",
-                            "level": 3,
-                            "name": "PaaS",
-                            "status": "active"
-                        },
-                        {
-                            "aliases": [
-                                "cloud software"
-                            ],
-                            "children": [],
-                            "code": "I-0101",
-                            "level": 3,
-                            "name": "SaaS",
-                            "status": "active"
-                        }
-                    ],
-                    "code": "I-01",
-                    "level": 2,
-                    "name": "Software",
-                    "status": "active"
-                }
-            ],
-            "code": "I",
-            "level": 1,
-            "name": "Infotech",
-            "status": "active"
-        }
-    ],
-    "version": 9
-}
+{"dict":"industry","version":1,"include_deprecated":false,"depth":null,"tree":[{"code":"manufacturing","name":"Manufacturing","level":1,"aliases":[],"children":[{"code":"auto","name":"Automotive","level":2,"aliases":["Old Automotive"],"children":[{"code":"ev","name":"New Energy Vehicles","level":3,"aliases":[],"children":[]}]},{"code":"elec","name":"Electronics Manufacturing","level":2,"aliases":[],"children":[]}]},{"code":"services","name":"Modern Services","level":1,"aliases":[],"children":[{"code":"consulting","name":"Consulting","level":2,"aliases":[],"children":[]}]}]}
+$ curl -s -i --header 'If-None-Match: <etag above>' (replay)
+etag=W/"3a7149a5a5f2b4c0"
+HTTP/1.1 304 Not Modified
+date: Tue, 17 Nov 2026 09:00:15 GMT
+server: uvicorn
+etag: W/"3a7149a5a5f2b4c0"
 
-## GET /api/taxonomy/dicts/industry/tree?depth=1
-{
-    "dict": "industry",
-    "tags": [
-        {
-            "aliases": [],
-            "children": [],
-            "code": "I",
-            "level": 1,
-            "name": "Infotech",
-            "status": "active"
-        }
-    ],
-    "version": 9
-}
 
-## conditional request: first 200 + ETag, then If-None-Match -> 304
-captured ETag: W/"e4b406843f7367bc"
-replay with If-None-Match -> HTTP 304, bytes=0
-
-## GET unknown dict -> 404
-HTTP 404
+$ curl depth=1
+{"dict":"industry","version":1,"include_deprecated":false,"depth":1,"tree":[{"code":"manufacturing","name":"Manufacturing","level":1,"aliases":[],"children":[]},{"code":"services","name":"Modern Services","level":1,"aliases":[],"children":[]}]}
+$ curl dicts list
+{"items":[{"code":"industry","name":"Industry Tags","version":1,"tag_count":6}],"total":1}
+$ curl unknown dict
+404
